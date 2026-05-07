@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UK Election Results — May 7 Declaration Timeline</title>
+<title>UK Election Results — May 8 Declaration Timeline</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -414,7 +414,7 @@
 <header>
   <div class="header-left">
     <h1>UK Election Declarations</h1>
-    <div class="sub">May 7, 2026 &mdash; estimated times</div>
+    <div class="sub">May 8, 2026 &mdash; estimated times</div>
   </div>
   <div class="clock-display">
     <div class="clock-time" id="clock-time">--:--:--</div>
@@ -756,7 +756,7 @@ function updateClock(){
 /* ── Now position relative to timeline ── */
 function nowMinutes(){
   const now = new Date();
-  const day = now.getDay(); // 4=Thu,5=Fri,6=Sat
+  const day = now.getDay(); // 5=Fri 8 May, 6=Sat 9 May
   // Map to our internal hours: friday h=0–23, saturday h=40+
   if(day === 5) return now.getHours()*60 + now.getMinutes();
   if(day === 6) return (now.getHours()+24)*60 + now.getMinutes() + (16*60); // rough offset — Sat 4pm = h40
@@ -812,7 +812,7 @@ function render(){
 
     const heading = document.createElement('div');
     heading.className = 'day-heading';
-    heading.textContent = day === 'friday' ? 'Friday 7 May — overnight & daytime' : 'Saturday 8 May';
+    heading.textContent = day === 'friday' ? 'Friday 8 May — overnight & daytime' : 'Saturday 8 May';
     section.appendChild(heading);
 
     const wrap = document.createElement('div');
