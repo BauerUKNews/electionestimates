@@ -1,0 +1,984 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UK Election Results — May 7 Declaration Timeline</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f2eb;
+    --surface: #faf8f4;
+    --border: rgba(0,0,0,0.10);
+    --border-strong: rgba(0,0,0,0.18);
+    --text-primary: #1a1a18;
+    --text-secondary: #5a5a52;
+    --text-muted: #9a9a90;
+    --accent: #2b3a2b;
+    --now-color: #c0392b;
+    --now-bg: #fdf0ee;
+    --sans: 'IBM Plex Sans', sans-serif;
+    --col-english-bg: #eef1f8;
+    --col-english-text: #2a3a6b;
+    --col-english-dot: #3d5a9e;
+    --col-scottish-bg: #edf5ee;
+    --col-scottish-text: #1d4a25;
+    --col-scottish-dot: #2e7d3a;
+    --col-welsh-bg: #fdf0ec;
+    --col-welsh-text: #6b2010;
+    --col-welsh-dot: #b5381a;
+    --col-mayoral-bg: #f5f0fb;
+    --col-mayoral-text: #3d2070;
+    --col-mayoral-dot: #6b3db5;
+  }
+
+  body {
+    background: var(--bg);
+    font-family: var(--sans);
+    color: var(--text-primary);
+    min-height: 100vh;
+  }
+
+  /* ── Header ── */
+  header {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 64px;
+  }
+
+  .header-left h1 {
+    font-size: 16px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--text-primary);
+    line-height: 1.2;
+  }
+
+  .header-left .sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 300;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-top: 1px;
+  }
+
+  .clock-display {
+    text-align: right;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+  }
+
+  .clock-time {
+    font-size: 20px;
+    font-weight: 300;
+    letter-spacing: 0.05em;
+    color: var(--text-primary);
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+  }
+
+  .clock-date {
+    font-size: 11px;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  /* ── Filters ── */
+  .filter-bar {
+    padding: 0.75rem 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+  }
+
+  .filter-label {
+    font-size: 11px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    margin-right: 4px;
+    font-weight: 400;
+  }
+
+  .filter-btn {
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 400;
+    padding: 5px 13px;
+    border-radius: 20px;
+    border: 1px solid var(--border-strong);
+    background: transparent;
+    color: var(--text-secondary);
+    cursor: pointer;
+    transition: all 0.15s ease;
+    letter-spacing: 0.01em;
+  }
+
+  .filter-btn:hover { background: rgba(0,0,0,0.04); }
+
+  .filter-btn.active-all {
+    background: var(--accent);
+    color: #f0ede5;
+    border-color: var(--accent);
+  }
+  .filter-btn.active-english {
+    background: var(--col-english-dot);
+    color: #fff;
+    border-color: var(--col-english-dot);
+  }
+  .filter-btn.active-scottish {
+    background: var(--col-scottish-dot);
+    color: #fff;
+    border-color: var(--col-scottish-dot);
+  }
+  .filter-btn.active-welsh {
+    background: var(--col-welsh-dot);
+    color: #fff;
+    border-color: var(--col-welsh-dot);
+  }
+  .filter-btn.active-mayoral {
+    background: var(--col-mayoral-dot);
+    color: #fff;
+    border-color: var(--col-mayoral-dot);
+  }
+  .filter-btn.active-friday,
+  .filter-btn.active-saturday {
+    background: var(--text-primary);
+    color: #f0ede5;
+    border-color: var(--text-primary);
+  }
+
+  .filter-btn.active-group {
+    background: #5a4a00;
+    color: #fefbe8;
+    border-color: #5a4a00;
+  }
+
+  .filter-row { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+
+  /* ── Main layout ── */
+  main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 2rem 4rem;
+  }
+
+  /* ── Legend ── */
+  .legend {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2rem;
+    padding: 1rem 1.25rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+  }
+
+  .leg-item {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--text-secondary);
+  }
+
+  .leg-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+
+  .leg-now {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 12px;
+    color: var(--now-color);
+    margin-left: auto;
+    font-weight: 500;
+  }
+
+  .leg-now-line {
+    width: 20px;
+    height: 2px;
+    background: var(--now-color);
+    border-radius: 1px;
+  }
+
+  /* ── Timeline ── */
+  .day-section {
+    margin-bottom: 2.5rem;
+  }
+
+  .day-heading {
+    font-size: 11px;
+    font-weight: 600;
+    font-style: normal;
+    color: var(--text-muted);
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 6px;
+    margin-bottom: 0;
+  }
+
+  .timeline-wrap {
+    position: relative;
+    padding-top: 0;
+  }
+
+  /* Vertical axis line */
+  .timeline-wrap::before {
+    content: '';
+    position: absolute;
+    left: 108px;
+    top: 0;
+    bottom: 0;
+    width: 1px;
+    background: var(--border-strong);
+  }
+
+  .tl-row {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    padding: 7px 0;
+    min-height: 32px;
+  }
+
+  .tl-time {
+    width: 96px;
+    flex-shrink: 0;
+    text-align: right;
+    padding-right: 12px;
+    font-size: 11.5px;
+    color: var(--text-muted);
+    padding-top: 4px;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: 0.01em;
+  }
+
+  .tl-dot-wrap {
+    width: 24px;
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    padding-top: 6px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tl-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    border: 2px solid var(--bg);
+  }
+
+  .tl-entries {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding-left: 8px;
+    padding-top: 2px;
+  }
+
+  .tl-pill {
+    font-size: 11.5px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-weight: 400;
+    white-space: nowrap;
+  }
+
+  .tl-count {
+    font-size: 11px;
+    color: var(--text-muted);
+    padding-top: 4px;
+    align-self: flex-start;
+    flex-shrink: 0;
+  }
+
+  /* ── Now indicator ── */
+  .now-indicator {
+    position: absolute;
+    left: 0;
+    right: 0;
+    z-index: 10;
+    pointer-events: none;
+  }
+
+  .now-line {
+    position: absolute;
+    left: 80px;
+    right: 0;
+    height: 2px;
+    background: var(--now-color);
+    top: 0;
+  }
+
+  .now-label {
+    position: absolute;
+    left: 82px;
+    top: -18px;
+    background: var(--now-color);
+    color: #fff;
+    font-size: 10px;
+    padding: 2px 7px;
+    border-radius: 3px;
+    font-weight: 500;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+  }
+
+  .now-dot {
+    position: absolute;
+    left: 104px;
+    top: -4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: var(--now-color);
+    border: 2px solid var(--bg);
+  }
+
+  /* Past rows slightly dimmed */
+  .tl-row.past { opacity: 0.45; }
+  .tl-row.current { background: var(--now-bg); border-radius: 6px; }
+
+  /* No results */
+  .no-results {
+    padding: 2rem 0 2rem 136px;
+    font-size: 13px;
+    color: var(--text-muted);
+    font-style: italic;
+  }
+
+  /* Scroll to now */
+  .scroll-now-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--now-color);
+    color: #fff;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: none;
+    cursor: pointer;
+    box-shadow: 0 2px 12px rgba(192,57,43,0.3);
+    display: none;
+    transition: opacity 0.2s;
+    z-index: 200;
+  }
+  .scroll-now-btn:hover { opacity: 0.85; }
+
+  @media (max-width: 600px) {
+    header { padding: 0 1rem; }
+    main { padding: 1rem 1rem 3rem; }
+    .filter-bar { padding: 0.75rem 1rem; }
+    .clock-time { font-size: 18px; }
+    .tl-time { width: 72px; font-size: 10.5px; }
+    .timeline-wrap::before { left: 84px; }
+    .now-line { left: 60px; }
+    .now-dot { left: 80px; }
+    .now-label { left: 62px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-left">
+    <h1>UK Election Declarations</h1>
+    <div class="sub">May 7, 2026 &mdash; estimated times</div>
+  </div>
+  <div class="clock-display">
+    <div class="clock-time" id="clock-time">--:--:--</div>
+    <div class="clock-date" id="clock-date">Loading&hellip;</div>
+  </div>
+</header>
+
+<div class="filter-bar">
+  <div class="filter-row">
+    <input type="text" id="search-box" placeholder="Search councils…" style="font-family:var(--sans);font-size:12px;padding:5px 12px;border-radius:4px;border:1px solid var(--border-strong);background:var(--surface);color:var(--text-primary);width:180px;outline:none;">
+    <span class="filter-label" style="margin-left:4px;">Nation</span>
+    <button class="filter-btn active-all" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="english">English</button>
+    <button class="filter-btn" data-filter="scottish">Scottish</button>
+    <button class="filter-btn" data-filter="welsh">Welsh</button>
+    <button class="filter-btn" data-filter="mayoral">Mayoral</button>
+    <button class="filter-btn" data-filter="friday">Friday</button>
+    <button class="filter-btn" data-filter="saturday">Saturday</button>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Map group</span>
+    <button class="filter-btn" data-group="all">All areas</button>
+    <button class="filter-btn" data-group="Focus 1">Focus 1</button>
+    <button class="filter-btn" data-group="Focus 2">Focus 2</button>
+    <button class="filter-btn" data-group="London">London</button>
+    <button class="filter-btn" data-group="Hub South and East">Hub S&amp;E</button>
+    <button class="filter-btn" data-group="Hub South &amp; West">Hub S&amp;W</button>
+    <button class="filter-btn" data-group="Hub North">Hub North</button>
+    <button class="filter-btn" data-group="Scotland">Scotland</button>
+    <button class="filter-btn" data-group="Wales">Wales</button>
+  </div>
+</div>
+
+<main>
+  <div class="legend">
+    <div class="leg-item"><div class="leg-dot" style="background:var(--col-english-dot)"></div>English councils</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--col-scottish-dot)"></div>Scottish parliament</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--col-welsh-dot)"></div>Welsh parliament</div>
+    <div class="leg-item"><div class="leg-dot" style="background:var(--col-mayoral-dot)"></div>Mayoral</div>
+    <div class="leg-now"><div class="leg-now-line"></div>Current time</div>
+  </div>
+
+  <div id="tl-container"></div>
+</main>
+
+<button class="scroll-now-btn" id="scroll-now-btn">&#9660; Jump to now</button>
+
+<script>
+const RAW = [
+  {t:"1:00am",h:1,m:0,day:"friday",cat:"english",e:["Broxbourne","Halton"]},
+  {t:"1:30am",h:1,m:30,day:"friday",cat:"english",e:["Harlow"]},
+  {t:"1:45am",h:1,m:45,day:"friday",cat:"english",e:["Redditch"]},
+  {t:"2:00am",h:2,m:0,day:"friday",cat:"english",e:["North East Lincolnshire","Chorley","Hart","Hartlepool","Hull","Lincoln","Rochford"]},
+  {t:"2:30am",h:2,m:30,day:"friday",cat:"english",e:["Wigan","Tamworth"]},
+  {t:"3:00am",h:3,m:0,day:"friday",cat:"english",e:["Basildon","Bolton","Brentwood","Exeter","Oxford","Peterborough","Portsmouth","Reading","Salford","Southend-on-Sea","Tameside"]},
+  {t:"3:30am",h:3,m:30,day:"friday",cat:"english",e:["Colchester","Dudley","Westminster"]},
+  {t:"4:00am",h:4,m:0,day:"friday",cat:"english",e:["Fareham","Gosport","Hampshire","Havant","Newcastle-under-Lyme","Plymouth","Wandsworth"]},
+  {t:"4:30am",h:4,m:30,day:"friday",cat:"english",e:["Ealing","Sutton"]},
+  {t:"5:00am",h:5,m:0,day:"friday",cat:"english",e:["Bexley","Eastleigh","Kensington & Chelsea","Merton","Oldham","Richmond-upon-Thames","Stockport"]},
+  {t:"5:30am",h:5,m:30,day:"friday",cat:"english",e:["Hammersmith & Fulham","Hounslow"]},
+  {t:"6:00am",h:6,m:0,day:"friday",cat:"english",e:["Havering"]},
+  {t:"6:30am",h:6,m:30,day:"friday",cat:"english",e:["Southampton"]},
+  {t:"12:00pm",h:12,m:0,day:"friday",cat:"scottish",e:["Airdrie"]},
+  {t:"12:30pm",h:12,m:30,day:"friday",cat:"english",e:["Blackburn","Manchester"]},
+  {t:"1:00pm",h:13,m:0,day:"friday",cat:"english",e:["Burnley"]},
+  {t:"1:00pm",h:13,m:0,day:"friday",cat:"scottish",e:["Ayr","Coatbridge & Chryston"]},
+  {t:"1:00pm",h:13,m:0,day:"friday",cat:"mayoral",e:["Hackney (mayor)","Newham (mayor)"]},
+  {t:"1:30pm",h:13,m:30,day:"friday",cat:"scottish",e:["Na h-Eileanan an Iar"]},
+  {t:"1:45pm",h:13,m:45,day:"friday",cat:"english",e:["North Tyneside"]},
+  {t:"2:00pm",h:14,m:0,day:"friday",cat:"english",e:["Cheltenham","Hyndburn","Rochdale","Sheffield","Welwyn Hatfield"]},
+  {t:"2:00pm",h:14,m:0,day:"friday",cat:"scottish",e:["Almond Valley","Bathgate","Cumbernauld & Kilsyth","Moray","Perthshire North","Perthshire South & Kinross-shire","Strathkelvin & Bearsden"]},
+  {t:"2:00pm",h:14,m:0,day:"friday",cat:"welsh",e:["Casnewydd Islwyn","Gwyr Abertawe","Sir Fynwy Torfaen"]},
+  {t:"2:00pm",h:14,m:0,day:"friday",cat:"mayoral",e:["Watford (mayor)"]},
+  {t:"2:15pm",h:14,m:15,day:"friday",cat:"scottish",e:["Glasgow Anniesland"]},
+  {t:"2:30pm",h:14,m:30,day:"friday",cat:"english",e:["Huntingdonshire","Norwich","Pendle","Preston","St Helens","West Oxfordshire"]},
+  {t:"2:30pm",h:14,m:30,day:"friday",cat:"scottish",e:["Cunninghame North","Cunninghame South","Glasgow Easterhouse & Springburn","Orkney Islands","Shetland Islands"]},
+  {t:"2:45pm",h:14,m:45,day:"friday",cat:"scottish",e:["Glasgow Baillieston & Shettleston"]},
+  {t:"3:00pm",h:15,m:0,day:"friday",cat:"english",e:["Cannock Chase","Epping Forest","Isle of Wight","Islington","Knowsley","Leeds","Rushmoor","Solihull","Three Rivers","Thurrock","Waltham Forest"]},
+  {t:"3:00pm",h:15,m:0,day:"friday",cat:"scottish",e:["Argyll & Bute","Cowdenbeath","East Lothian Coast & Lammermuirs","Edinburgh Central","Edinburgh Eastern, Musselburgh & Tranent","Edinburgh North Eastern & Leith","Edinburgh Northern","Edinburgh North Western","Edinburgh Southern","Edinburgh South Western","Fife Mid & Glenrothes","Fife North East","Glasgow Central","Kirkcaldy","Motherwell & Wishaw","Paisley","Renfrewshire North & Cardonald","Renfrewshire West & Levern Valley"]},
+  {t:"3:00pm",h:15,m:0,day:"friday",cat:"welsh",e:["Bangor Conwy Mon","Blaenau Gwent Caerffili Rhymni","Brycheiniog Tawe Nedd","Caerdydd Ffynnon Taf","Caerdydd Penarth","Ceredigion Penfro","Clwyd","Pen-y-Bont Bro Morgannwg"]},
+  {t:"3:00pm",h:15,m:0,day:"friday",cat:"mayoral",e:["Lewisham (mayor)"]},
+  {t:"3:15pm",h:15,m:15,day:"friday",cat:"scottish",e:["Glasgow Southside"]},
+  {t:"3:30pm",h:15,m:30,day:"friday",cat:"english",e:["Nuneaton & Bedworth"]},
+  {t:"3:30pm",h:15,m:30,day:"friday",cat:"scottish",e:["Aberdeen Central","Aberdeen Deeside & North Kincardine","Aberdeen Donside","Aberdeenshire East","Aberdeenshire West","Banffshire & Buchan Coast","Dumfriesshire","Galloway & Dumfries West","Glasgow Kelvin & Maryhill","Scotland North East"]},
+  {t:"3:30pm",h:15,m:30,day:"friday",cat:"welsh",e:["Afan Ogwr Rhondda","Gwynedd Maldwyn"]},
+  {t:"3:45pm",h:15,m:45,day:"friday",cat:"scottish",e:["Glasgow Cathcart & Pollok"]},
+  {t:"4:00pm",h:16,m:0,day:"friday",cat:"english",e:["Basingstoke & Deane","Crawley","Gateshead","Greenwich","Hillingdon","Ipswich","Rugby","South Cambridgeshire","Suffolk","Sunderland","Trafford","Tunbridge Wells","West Lancashire","West Sussex","Wolverhampton"]},
+  {t:"4:00pm",h:16,m:0,day:"friday",cat:"scottish",e:["Angus North & Mearns","Angus South","Caithness, Sutherland & Ross","Carrick, Cumnock & Doon Valley","Clackmannanshire & Dunblane","Clydesdale","Dundee City East","Dundee City West","Dunfermline","East Kilbride","Eastwood","Falkirk West","Hamilton, Larkhall & Stonehouse","Kilmarnock & Irvine Valley","Midlothian North","Rutherglen & Cambuslang","Scotland South","Scotland West","Stirling","Uddingston & Bellshill"]},
+  {t:"4:00pm",h:16,m:0,day:"friday",cat:"welsh",e:["Pontypridd Cynon Merthyr","Sir Gaerfyrddin"]},
+  {t:"4:00pm",h:16,m:0,day:"friday",cat:"mayoral",e:["Croydon (mayor)"]},
+  {t:"4:15pm",h:16,m:15,day:"friday",cat:"scottish",e:["Glasgow"]},
+  {t:"4:30pm",h:16,m:30,day:"friday",cat:"english",e:["Barnsley","Bury","Harrow"]},
+  {t:"4:30pm",h:16,m:30,day:"friday",cat:"scottish",e:["Ettrick, Roxburgh & Berwickshire","Falkirk East & Linlithgow","Inverclyde","Midlothian South, Tweeddale & Lauderdale"]},
+  {t:"4:45pm",h:16,m:45,day:"friday",cat:"english",e:["Newcastle-upon-Tyne"]},
+  {t:"5:00pm",h:17,m:0,day:"friday",cat:"english",e:["Barking & Dagenham","Barnet","Brent","Cambridge","Coventry","Enfield","Essex","Hackney","Milton Keynes","Redbridge","Sandwell","St Albans","Stevenage","Walsall","Watford","Wokingham"]},
+  {t:"5:00pm",h:17,m:0,day:"friday",cat:"scottish",e:["Clydebank & Milngavie","Dumbarton","Scotland Central & Lothians West"]},
+  {t:"5:30pm",h:17,m:30,day:"friday",cat:"english",e:["Haringey","Norfolk","Sefton","South Tyneside"]},
+  {t:"5:30pm",h:17,m:30,day:"friday",cat:"scottish",e:["Scotland Mid & Fife"]},
+  {t:"5:30pm",h:17,m:30,day:"friday",cat:"welsh",e:["Fflint Wrecsam"]},
+  {t:"6:00pm",h:18,m:0,day:"friday",cat:"english",e:["Adur","Birmingham","Camden","East Surrey","East Sussex","Hastings","Kingston-upon-Thames","Kirklees","Lambeth","Newham","Southwark","Swindon","Wakefield","West Surrey","Winchester","Worthing"]},
+  {t:"6:00pm",h:18,m:0,day:"friday",cat:"scottish",e:["Edinburgh & Lothians East"]},
+  {t:"6:00pm",h:18,m:0,day:"friday",cat:"mayoral",e:["Tower Hamlets (mayor)"]},
+  {t:"6:30pm",h:18,m:30,day:"friday",cat:"scottish",e:["Inverness & Nairn","Skye, Lochaber & Badenoch"]},
+  {t:"7:00pm",h:19,m:0,day:"friday",cat:"english",e:["Bromley","Cherwell"]},
+  {t:"7:00pm",h:19,m:0,day:"friday",cat:"scottish",e:["Highlands & Islands"]},
+  {t:"8:30pm",h:20,m:30,day:"friday",cat:"english",e:["Calderdale"]},
+  {t:"4:00pm",h:40,m:0,day:"saturday",cat:"english",e:["Bradford","Croydon","Lewisham"]},
+  {t:"6:00pm",h:42,m:0,day:"saturday",cat:"english",e:["Tower Hamlets"]},
+];
+
+const CAT_STYLE = {
+  english:  {bg:"var(--col-english-bg)",  text:"var(--col-english-text)",  dot:"var(--col-english-dot)"},
+  scottish: {bg:"var(--col-scottish-bg)", text:"var(--col-scottish-text)", dot:"var(--col-scottish-dot)"},
+  welsh:    {bg:"var(--col-welsh-bg)",    text:"var(--col-welsh-text)",    dot:"var(--col-welsh-dot)"},
+  mayoral:  {bg:"var(--col-mayoral-bg)",  text:"var(--col-mayoral-text)",  dot:"var(--col-mayoral-dot)"},
+};
+
+let activeFilter = "all";
+let activeGroup = "all";
+let nowEl = null;
+
+/* ── Map group mapping ── */
+// Each key is exactly as it appears in the election timeline data.
+// Groups match the TSA polygon regions on the TSA map exactly.
+// Focus 1: Bristol,Bath&West | Kent | Liverpool&NW | Manchester&NW | South Coast | South Wales
+// Focus 2: Birmingham&WM | East Midlands | North East | SY&NDerbs | Teesside | West Yorkshire
+// London: London
+// Hub South and East: Berks&NHants | BucksBeds&Herts | Cambridge | Essex | Norfolk&NSuffolk | Northants | Oxfordshire | Peterborough | Suffolk | Surrey&EHants | Sussex
+// Hub South & West: Cornwall | Coventry&Warks | Devon/Plymouth | Dorset | Gloucestershire | Hereford&Worcs | Somerset | Swindon | WestOfEngland | Wiltshire
+// Hub North: BlackCountry&Shrop | Cumbria | EYorks&NLincs | Lancashire | Lincolnshire | NorthYorkshire | Staffs&Cheshire
+// Scotland / Northern Ireland handled by cat
+const COUNCIL_GROUPS = {
+  // ── FOCUS 1 ── Manchester & the North West
+  "Wigan":         "Focus 1",
+  "Bolton":        "Focus 1",
+  "Bury":          "Focus 1",
+  "Rochdale":      "Focus 1",
+  "Oldham":        "Focus 1",
+  "Tameside":      "Focus 1",
+  "Stockport":     "Focus 1",
+  "Trafford":      "Focus 1",
+  "Manchester":    "Focus 1",
+  "Salford":       "Focus 1",
+  // ── FOCUS 1 ── Liverpool & the North West
+  "Halton":        "Focus 1",
+  "Sefton":        "Focus 1",
+  "St Helens":     "Focus 1",
+  "Knowsley":      "Focus 1",
+  // ── FOCUS 1 ── The South Coast
+  "Portsmouth":    "Focus 1",
+  "Fareham":       "Focus 1",
+  "Gosport":       "Focus 1",
+  "Havant":        "Focus 1",
+  "Eastleigh":     "Focus 1",
+  "Southampton":   "Focus 1",
+  "Winchester":    "Focus 1",
+  "Isle of Wight": "Focus 1",
+  // ── FOCUS 1 ── Kent
+  "Tunbridge Wells": "Focus 1",
+  // ── FOCUS 1 ── Bristol, Bath & the West (none in election data)
+  // ── FOCUS 1 ── South Wales (declared as Welsh parliament seats)
+
+  // ── FOCUS 2 ── Birmingham & the West Midlands
+  "Birmingham":    "Focus 2",
+  "Sandwell":      "Focus 2",
+  "Wolverhampton": "Focus 2",
+  "Dudley":        "Focus 2",
+  "Walsall":       "Focus 2",
+  "Solihull":      "Focus 2",
+  // ── FOCUS 2 ── West Yorkshire
+  "Leeds":         "Focus 2",
+  "Bradford":      "Focus 2",
+  "Calderdale":    "Focus 2",
+  "Kirklees":      "Focus 2",
+  "Wakefield":     "Focus 2",
+  // ── FOCUS 2 ── South Yorkshire & North Derbyshire
+  "Sheffield":     "Focus 2",
+  "Barnsley":      "Focus 2",
+  // ── FOCUS 2 ── North East
+  "Newcastle-upon-Tyne": "Focus 2",
+  "Gateshead":     "Focus 2",
+  "Sunderland":    "Focus 2",
+  "South Tyneside":"Focus 2",
+  "North Tyneside":"Focus 2",
+  // ── FOCUS 2 ── Teesside
+  "Hartlepool":    "Focus 2",
+  // ── FOCUS 2 ── East Midlands
+  "Nuneaton & Bedworth": "Focus 2",
+
+  // ── LONDON ──
+  "Westminster":            "London",
+  "Kensington & Chelsea":   "London",
+  "Hammersmith & Fulham":   "London",
+  "Wandsworth":             "London",
+  "Lambeth":                "London",
+  "Southwark":              "London",
+  "Lewisham":               "London",
+  "Greenwich":              "London",
+  "Tower Hamlets":          "London",
+  "Hackney":                "London",
+  "Islington":              "London",
+  "Camden":                 "London",
+  "Haringey":               "London",
+  "Enfield":                "London",
+  "Barnet":                 "London",
+  "Brent":                  "London",
+  "Ealing":                 "London",
+  "Hounslow":               "London",
+  "Richmond-upon-Thames":   "London",
+  "Kingston-upon-Thames":   "London",
+  "Merton":                 "London",
+  "Sutton":                 "London",
+  "Croydon":                "London",
+  "Bromley":                "London",
+  "Bexley":                 "London",
+  "Havering":               "London",
+  "Barking & Dagenham":     "London",
+  "Redbridge":              "London",
+  "Waltham Forest":         "London",
+  "Newham":                 "London",
+  "Hillingdon":             "London",
+  "Harrow":                 "London",
+  // Mayoral elections in London boroughs
+  "Hackney (mayor)":        "London",
+  "Newham (mayor)":         "London",
+  "Lewisham (mayor)":       "London",
+  "Croydon (mayor)":        "London",
+  "Tower Hamlets (mayor)":  "London",
+
+  // ── HUB SOUTH AND EAST ── Berkshire & North Hampshire
+  "Reading":                "Hub South and East",
+  "Wokingham":              "Hub South and East",
+  "Hart":                   "Hub South and East",
+  "Rushmoor":               "Hub South and East",
+  "Basingstoke & Deane":    "Hub South and East",
+  "Hampshire":              "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Bucks, Beds & Herts
+  "Milton Keynes":          "Hub South and East",
+  "Welwyn Hatfield":        "Hub South and East",
+  "St Albans":              "Hub South and East",
+  "Stevenage":              "Hub South and East",
+  "Three Rivers":           "Hub South and East",
+  "Watford":                "Hub South and East",
+  "Watford (mayor)":        "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Cambridge
+  "Cambridge":              "Hub South and East",
+  "South Cambridgeshire":   "Hub South and East",
+  "Huntingdonshire":        "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Essex
+  "Basildon":               "Hub South and East",
+  "Brentwood":              "Hub South and East",
+  "Broxbourne":             "Hub South and East",
+  "Colchester":             "Hub South and East",
+  "Epping Forest":          "Hub South and East",
+  "Essex":                  "Hub South and East",
+  "Harlow":                 "Hub South and East",
+  "Rochford":               "Hub South and East",
+  "Southend-on-Sea":        "Hub South and East",
+  "Thurrock":               "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Norfolk & North Suffolk / West Norfolk
+  "Norfolk":                "Hub South and East",
+  "Norwich":                "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Northamptonshire
+  // (none in election data - no Northants councils declaring)
+  // ── HUB SOUTH AND EAST ── Oxfordshire
+  "Oxford":                 "Hub South and East",
+  "West Oxfordshire":       "Hub South and East",
+  "Cherwell":               "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Peterborough, Stamford & Rutland
+  "Peterborough":           "Hub North",  // Peterborough, Stamford & Rutland TSA → Hub North
+  // ── HUB SOUTH AND EAST ── Suffolk
+  "Ipswich":                "Hub South and East",
+  "Suffolk":                "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Surrey & East Hampshire
+  "East Surrey":            "Hub South and East",
+  "West Surrey":            "Hub South and East",
+  // ── HUB SOUTH AND EAST ── Sussex
+  "Adur":                   "Hub South and East",
+  "Crawley":                "Hub South and East",
+  "East Sussex":            "Hub South and East",
+  "Hastings":               "Hub South and East",
+  "West Sussex":            "Hub South and East",
+  "Worthing":               "Hub South and East",
+
+  // ── HUB SOUTH & WEST ── Coventry & Warwickshire
+  "Coventry":               "Hub South & West",
+  "Rugby":                  "Hub South & West",
+  // ── HUB SOUTH & WEST ── Devon / Plymouth
+  "Exeter":                 "Hub South & West",
+  "Plymouth":               "Hub South & West",
+  // ── HUB SOUTH & WEST ── Gloucestershire
+  "Cheltenham":             "Hub South & West",
+  // ── HUB SOUTH & WEST ── Herefordshire & Worcestershire
+  "Redditch":               "Hub South & West",
+  // ── HUB SOUTH & WEST ── Swindon
+  "Swindon":                "Hub South & West",
+
+  // ── HUB NORTH ── Lancashire
+  "Blackburn":              "Hub North",
+  "Burnley":                "Hub North",
+  "Chorley":                "Hub North",
+  "Hyndburn":               "Hub North",
+  "Pendle":                 "Hub North",
+  "Preston":                "Hub North",
+  "West Lancashire":        "Hub North",
+  // ── HUB NORTH ── Staffordshire & Cheshire
+  "Cannock Chase":          "Hub North",
+  "Newcastle-under-Lyme":   "Hub North",
+  "Tamworth":               "Hub North",
+  // ── HUB NORTH ── East Yorkshire & North Lincolnshire
+  "Hull":                   "Hub North",
+  "North East Lincolnshire":"Hub North",
+  // ── HUB NORTH ── Lincolnshire
+  "Lincoln":                "Hub North",
+  // ── HUB NORTH ── Peterborough, Stamford & Rutland
+  // (already assigned to Hub South and East above - Peterborough is in this TSA per the map)
+  // ── HUB NORTH ── The Black Country & Shropshire
+  // (covered by Birmingham & West Midlands entries in Focus 2 above)
+  // ── HUB NORTH ── Cumbria (none in election data)
+  // ── HUB NORTH ── North Yorkshire (none declaring on election night)
+};
+
+function getGroup(name) {
+  return COUNCIL_GROUPS[name] || null;
+}
+
+/* ── Clock ── */
+function pad(n){ return String(n).padStart(2,'0'); }
+
+function updateClock(){
+  const now = new Date();
+  const h = now.getHours(), mi = now.getMinutes(), s = now.getSeconds();
+  document.getElementById('clock-time').textContent =
+    `${pad(h)}:${pad(mi)}:${pad(s)}`;
+  document.getElementById('clock-date').textContent =
+    now.toLocaleDateString('en-GB',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+}
+
+/* ── Now position relative to timeline ── */
+function nowMinutes(){
+  const now = new Date();
+  const day = now.getDay(); // 4=Thu,5=Fri,6=Sat
+  // Map to our internal hours: friday h=0–23, saturday h=40+
+  if(day === 5) return now.getHours()*60 + now.getMinutes();
+  if(day === 6) return (now.getHours()+24)*60 + now.getMinutes() + (16*60); // rough offset — Sat 4pm = h40
+  return null; // not election day — show as "now" anyway for demo
+}
+
+function rowMinutes(item){
+  return item.h * 60 + item.m;
+}
+
+/* ── Render ── */
+function render(){
+  const container = document.getElementById('tl-container');
+  container.innerHTML = '';
+
+  const searchTerm = document.getElementById('search-box').value.trim().toLowerCase();
+
+  const filtered = RAW.filter(item => {
+    const catMatch = (() => {
+      if(activeFilter === 'all') return true;
+      if(activeFilter === 'friday') return item.day === 'friday';
+      if(activeFilter === 'saturday') return item.day === 'saturday';
+      return item.cat === activeFilter;
+    })();
+    if(!catMatch) return false;
+
+    // Group filter: keep item if any of its entries match the group
+    if(activeGroup !== 'all') {
+      const hasMatch = item.e.some(name => {
+        const g = getGroup(name);
+        if(activeGroup === 'Scotland') return g === 'Scotland' || item.cat === 'scottish';
+        if(activeGroup === 'Wales') return item.cat === 'welsh';
+        return g === activeGroup;
+      });
+      if(!hasMatch) return false;
+    }
+
+    if(!searchTerm) return true;
+    return item.e.some(name => name.toLowerCase().includes(searchTerm));
+  });
+
+  if(!filtered.length){
+    container.innerHTML = '<div class="no-results">No declarations match this filter.</div>';
+    return;
+  }
+
+  const days = [...new Set(filtered.map(i=>i.day))];
+
+  days.forEach(day => {
+    const items = filtered.filter(i=>i.day===day);
+    const section = document.createElement('div');
+    section.className = 'day-section';
+
+    const heading = document.createElement('div');
+    heading.className = 'day-heading';
+    heading.textContent = day === 'friday' ? 'Friday 7 May — overnight & daytime' : 'Saturday 8 May';
+    section.appendChild(heading);
+
+    const wrap = document.createElement('div');
+    wrap.className = 'timeline-wrap';
+    section.appendChild(wrap);
+
+    // Group items by time label for display, but keep all separate for now-indicator
+    items.forEach((item, idx) => {
+      const nowM = nowMinutes();
+      const itemM = rowMinutes(item);
+      const isPast = nowM !== null && itemM < nowM;
+      const isNear = nowM !== null && Math.abs(itemM - nowM) < 30;
+
+      const row = document.createElement('div');
+      row.className = 'tl-row' + (isPast ? ' past' : '');
+      row.dataset.minutes = itemM;
+      row.dataset.day = day;
+
+      const timeEl = document.createElement('div');
+      timeEl.className = 'tl-time';
+      timeEl.textContent = item.t;
+      row.appendChild(timeEl);
+
+      const dotWrap = document.createElement('div');
+      dotWrap.className = 'tl-dot-wrap';
+      const dot = document.createElement('div');
+      dot.className = 'tl-dot';
+      dot.style.background = CAT_STYLE[item.cat].dot;
+      dotWrap.appendChild(dot);
+      row.appendChild(dotWrap);
+
+      const entries = document.createElement('div');
+      entries.className = 'tl-entries';
+      item.e.forEach(name => {
+        const pill = document.createElement('span');
+        pill.className = 'tl-pill';
+        const searchMatch = searchTerm && name.toLowerCase().includes(searchTerm);
+        const groupMatch = activeGroup !== 'all' && (() => {
+          const g = getGroup(name);
+          if(activeGroup === 'Scotland') return g === 'Scotland' || item.cat === 'scottish';
+          if(activeGroup === 'Wales') return g === 'Wales' || item.cat === 'welsh';
+          return g === activeGroup;
+        })();
+        const highlight = searchMatch || groupMatch;
+        pill.style.background = highlight ? CAT_STYLE[item.cat].dot : CAT_STYLE[item.cat].bg;
+        pill.style.color = highlight ? '#fff' : CAT_STYLE[item.cat].text;
+        pill.style.fontWeight = highlight ? '500' : '400';
+        pill.textContent = name;
+        entries.appendChild(pill);
+      });
+      if(item.e.length > 3){
+        const cnt = document.createElement('span');
+        cnt.className = 'tl-count';
+        cnt.textContent = item.e.length + ' declarations';
+        entries.appendChild(cnt);
+      }
+      row.appendChild(entries);
+
+      wrap.appendChild(row);
+    });
+
+    // Insert "now" indicator
+    if(day === 'friday'){
+      insertNowIndicator(wrap, items);
+    }
+
+    container.appendChild(section);
+  });
+
+  updateScrollBtn();
+}
+
+function insertNowIndicator(wrap, items){
+  const nowM = nowMinutes();
+  if(nowM === null) return;
+
+  const rows = wrap.querySelectorAll('.tl-row');
+  if(!rows.length) return;
+
+  let insertBefore = null;
+  for(const row of rows){
+    if(parseInt(row.dataset.minutes) > nowM){
+      insertBefore = row;
+      break;
+    }
+  }
+
+  const now = new Date();
+  const label = `${pad(now.getHours())}:${pad(now.getMinutes())} now`;
+
+  const ind = document.createElement('div');
+  ind.id = 'now-indicator';
+  ind.className = 'now-indicator';
+  ind.style.position = 'relative';
+  ind.style.height = '24px';
+  ind.style.margin = '2px 0';
+
+  ind.innerHTML = `
+    <div class="now-line"></div>
+    <div class="now-label">${label}</div>
+    <div class="now-dot"></div>
+  `;
+
+  if(insertBefore){
+    wrap.insertBefore(ind, insertBefore);
+  } else {
+    wrap.appendChild(ind);
+  }
+
+  nowEl = ind;
+}
+
+function updateScrollBtn(){
+  const btn = document.getElementById('scroll-now-btn');
+  if(nowEl){
+    btn.style.display = 'block';
+  } else {
+    btn.style.display = 'none';
+  }
+}
+
+document.getElementById('search-box').addEventListener('input', () => render());
+
+/* ── Filter buttons ── */
+document.querySelectorAll('[data-filter]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-filter]').forEach(b => {
+      b.className = 'filter-btn';
+    });
+    activeFilter = btn.dataset.filter;
+    btn.classList.add('active-' + activeFilter);
+    render();
+  });
+});
+
+document.querySelectorAll('[data-group]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-group]').forEach(b => {
+      b.className = 'filter-btn';
+    });
+    activeGroup = btn.dataset.group;
+    btn.classList.add('active-group');
+    render();
+  });
+});
+
+// Set initial active state on group buttons
+document.querySelector('[data-group="all"]').classList.add('active-group');
+
+/* ── Scroll to now ── */
+document.getElementById('scroll-now-btn').addEventListener('click', () => {
+  const ind = document.getElementById('now-indicator');
+  if(ind) ind.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+/* ── Init ── */
+updateClock();
+setInterval(updateClock, 1000);
+setInterval(() => render(), 60000); // re-render every minute to update past/future
+render();
+
+// Auto-scroll to now on first load (after short delay)
+setTimeout(() => {
+  const ind = document.getElementById('now-indicator');
+  if(ind) ind.scrollIntoView({behavior:'smooth', block:'center'});
+}, 600);
+</script>
+</body>
+</html>
