@@ -783,17 +783,6 @@ function render(){
     })();
     if(!catMatch) return false;
 
-    // Group filter: keep item if any of its entries match the group
-    if(activeGroup !== 'all') {
-      const hasMatch = item.e.some(name => {
-        const g = getGroup(name);
-        if(activeGroup === 'Scotland') return g === 'Scotland' || item.cat === 'scottish';
-        if(activeGroup === 'Wales') return item.cat === 'welsh';
-        return g === activeGroup;
-      });
-      if(!hasMatch) return false;
-    }
-
     if(!searchTerm) return true;
     return item.e.some(name => name.toLowerCase().includes(searchTerm));
   });
